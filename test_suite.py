@@ -17,8 +17,8 @@ mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE))
 # appropriate threshold levels and set them 
 # accordingly. Then, use them to determine
 # when it is light or dark, quiet or loud.
-lux_treshold=0  # change this value
-sound_treshold=0 # change this value
+lux_treshold=250  # change this value
+sound_treshold=300 # change this value
 
 
 while True: 
@@ -30,26 +30,26 @@ while True:
 
   for i in range(50):
     time.sleep(0.1)
-    lux_reading = mcp.read([Adafruit_MCP3008.CH0])
-    print(mcp.read([Adafruit_MCP3008.CH0]))
+    lux_reading = mcp.read_adc(0)
+    print("led:",lux_reading)
     if lux_reading > lux_treshold:
       print("bright")
     else:
       print("dark")
     
-    for i in range(4):
-      GPIO.output(chan_list,1)
-      time.sleep(0.2)
-      GPIO.output(chan_list,0) 
+  for i in range(4):
+    GPIO.output(chan_list,1)
+    time.sleep(0.2)
+    GPIO.output(chan_list,0) 
     
-    for i in range(50):
+  for i in range(50):
+    time.sleep(0.1)
+    sound_reading = mcp.read_adc(1)
+    print("sound:",sound_reading)
+    if sound_reading > sound_treshold:
+      GPIO.output(chan_list,1)
       time.sleep(0.1)
-      sound_reading = mcp.read([Adafruit_MCP3008.CH1])
-      print(mcp.read([Adafruit_MCP3008.CH1]))
-      if sound_reading > sound_treshold:
-        GPIO.output(chan_list,1)
-        time.sleep(0.1)
-        GPIO.output(chan_list,0)
+      GPIO.output(chan_list,0)
         
     
   #Following commands control the state of the output
